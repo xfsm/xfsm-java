@@ -3,6 +3,7 @@ package com.mabook.xfsm;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by sng2c on 15. 7. 28..
@@ -17,7 +18,7 @@ public class RuleSet {
 		initialEvent = "__init__";
 	}
 
-	public static RuleSet fromJson(String json){
+	public static RuleSet fromJson(String json) {
 		Gson gson = new Gson();
 		return gson.fromJson(json, RuleSet.class);
 	}
@@ -26,6 +27,47 @@ public class RuleSet {
 		Gson gson = new Gson();
 		return gson.toJson(this);
 	}
+
+	public String toPlantUml() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("@startuml").append("\n");
+		for (Map.Entry<String, State> entry : states.entrySet()) {
+			State state = entry.getValue();
+			sb.append("State ").append(state.name);
+			sb.append("\n");
+			if (state.onEnter != null || state.onExit != null) {
+				if (state.onEnter != null) {
+					sb.append(state.name).append(" : in '").append(state.onEnter).append("'\n");
+				}
+				if (state.onExit != null) {
+					sb.append(state.name).append(" : out '").append(state.onExit).append("'\n");
+				}
+				sb.append("\n");
+			}
+
+		}
+		for (Map.Entry<String, Transition> entry : transitions.entrySet()) {
+			Transition tr = entry.getValue();
+			String from = tr.fromStateName;
+			if (from == null) {
+				from = "[*]";
+			}
+			sb.append(from)
+					.append(" --> ")
+					.append(tr.toStateName)
+					.append(" : ")
+					.append(tr.event);
+			if (tr.onTransition != null) {
+				sb.append(" '")
+						.append(tr.onTransition)
+						.append("'");
+			}
+			sb.append("\n");
+		}
+		sb.append("@enduml").append("\n");
+		return sb.toString();
+	}
+
 
 	private void registerState(String stateName, String onEnterAction, String onExitAction) {
 		states.put(stateName, new State(stateName, onEnterAction, onExitAction));
@@ -138,6 +180,7 @@ public class RuleSet {
 			return builder.build();
 		}
 	}
+
 	public static class Builder {
 		RuleSet ruleSet = new RuleSet();
 		boolean initialStateSet = false;

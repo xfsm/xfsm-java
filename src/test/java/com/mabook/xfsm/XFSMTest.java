@@ -298,4 +298,65 @@ public class XFSMTest {
 		assertTrue("builder same", ruleSet.toJson().equals(ruleSet2.toJson()));
 	}
 
+
+	@Test
+	public void testPlantUml() {
+
+		RuleSet.Builder rb2 = new RuleSet.Builder();
+		rb2
+				.state("init", "at home", "at street")
+				.state("hello", "say hello", "say bye")
+				.initialState("init")
+				.onState("init")
+				.onEvent("go out", "hello", "take a taxi")
+				.onState("hello")
+				.onEvent("go home", "init", "take a bus");
+		RuleSet ruleSet2 = rb2.build();
+
+
+		System.out.println(ruleSet2.toPlantUml());
+	}
+
+	@Test
+	public void dump() {
+		RuleSet.Builder builder = new RuleSet.Builder();
+		builder
+				.state("NONE", null, null)
+				.state("STOPPED", "DO_STOP", null)
+				.state("STARTING", "DO_START", null)
+				.state("READY", "DO_CHECK_PLAY", null)
+				.state("PLAYING", "DO_PREPARE_PLAY", "DO_CLEAR_PLAY")
+				.state("RECORDING", "DO_PREPARE_RECORD", "DO_CLEAR_RECORD")
+				.state("SENDING", "DO_PREPARE_SEND", "DO_CLEAR_SEND")
+				.state("INT", null, null)
+				.state("HUP", null, null)
+
+				.initialState("NONE")
+
+				.onState("NONE")
+				.onEvent("START", "STARTING")
+
+				.onState("STARTING")
+				.onEvent("START_DONE", "READY")
+
+				.onState("READY")
+				.onEvent("RESTART", "STARTING", "DO_RESET")
+				.onEvent("STOP", "STOPPED")
+				.onEvent("PLAY", "PLAYING", "DO_PLAY")
+				.onEvent("TOGGLE_RECORD", "RECORDING", "DO_RECORD")
+
+				.onState("PLAYING")
+				.onEvent("PLAY_DONE", "READY")
+				.onEvent("STOP", "STOPPED")
+
+				.onState("RECORDING")
+				.onEvent("TOGGLE_RECORD", "SENDING", "DO_SEND")
+				.onEvent("STOP", "STOPPED")
+
+				.onState("SENDING")
+				.onEvent("SEND_DONE", "READY")
+				.onEvent("STOP", "STOPPED");
+
+		System.out.println(builder.build().toPlantUml());
+	}
 }
