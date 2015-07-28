@@ -28,7 +28,7 @@ public class XFSMTest extends TestCase {
 	@Test
 	public void testRun(){
 
-		RuleSet ruleSet = new RuleSet();
+		XFSM.RuleSet ruleSet = new XFSM.RuleSet();
 		ruleSet
 				.registerState("init", "at home", "at street")
 				.registerState("hello", "say hello", "say bye")
@@ -51,7 +51,7 @@ public class XFSMTest extends TestCase {
 	}
 
 	public void testEmit(){
-		RuleSet ruleSet = new RuleSet();
+		XFSM.RuleSet ruleSet = new XFSM.RuleSet();
 		ruleSet
 				.registerState("init", "at home", "at street")
 				.registerState("hello", "say hello", "say bye")
