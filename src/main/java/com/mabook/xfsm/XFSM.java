@@ -10,39 +10,6 @@ public class XFSM {
 		void onAction(XFSM context, When when, String action);
 	}
 
-	public static class StateNotFoundException extends RuntimeException {
-		public StateNotFoundException(String stateName) {
-			super(String.format("'%s' is not defined.", stateName));
-		}
-	}
-
-	public static class State {
-		public String name;
-		public String onEnterAction;
-		public String onExitAction;
-
-		public State(String name, String onEnterAction, String onExitAction) {
-			this.name = name;
-			this.onEnterAction = onEnterAction;
-			this.onExitAction = onExitAction;
-		}
-	}
-
-	public static class Transition {
-		public String event;
-		public String fromStateName;
-		public String toStateName;
-		public String onTransitAction;
-
-		public Transition(String event, String fromStateName, String toStateName, String onTransitAction) {
-			this.event = event;
-			this.fromStateName = fromStateName;
-			this.toStateName = toStateName;
-			this.onTransitAction = onTransitAction;
-		}
-	}
-
-
 	String currentStateName;
 	ActionListener actionListener;
 	final BlockingQueue<String> eventQueue;
@@ -58,7 +25,7 @@ public class XFSM {
 		this.actionListener = actionListener;
 	}
 
-	public State getCurrentState() {
+	public RuleSet.State getCurrentState() {
 		return ruleSet.getState(currentStateName);
 	}
 
@@ -71,7 +38,7 @@ public class XFSM {
 	}
 
 	public void init() {
-		emit(ruleSet.initEvent);
+		emit(ruleSet.initialEvent);
 	}
 
 	public void emit(String event) {
@@ -79,17 +46,21 @@ public class XFSM {
 	}
 
 	private void consume(String event) {
-		State currentState = ruleSet.getState(currentStateName);
+		RuleSet.State currentState = ruleSet.getState(currentStateName);
 
-		Transition transition = ruleSet.getTransition(currentState, event);
+		RuleSet.Transition transition = ruleSet.getTransition(currentState, event);
 		if (transition != null) {
 			// EXIT
-			if (actionListener != null) {
-				if (currentState != null && currentState.onExitAction != null) {
-					actionListener.onAction(this, When.EXIT, currentState.onExitAction);
+			if (currentState != null && currentState.onExit != null) {
+				if (actionListener != null) {
+					actionListener.onAction(this, When.EXIT, currentState.onExit);
 				}
-				if (transition.onTransitAction != null) {
-					actionListener.onAction(this, When.TRANSITION, transition.onTransitAction);
+			}
+
+			// TRANSITION
+			if (transition.onTransition != null) {
+				if (actionListener != null) {
+					actionListener.onAction(this, When.TRANSITION, transition.onTransition);
 				}
 			}
 
@@ -98,9 +69,9 @@ public class XFSM {
 
 			// ENTER
 			if (actionListener != null) {
-				if (currentState.onEnterAction != null) {
+				if (currentState.onEnter != null) {
 					if (actionListener != null) {
-						actionListener.onAction(this, When.ENTER, currentState.onEnterAction);
+						actionListener.onAction(this, When.ENTER, currentState.onEnter);
 					}
 				}
 			}

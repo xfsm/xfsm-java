@@ -15,9 +15,87 @@ public class RuleSet {
 		}
 	}
 
+	public static class StateNotFoundException extends RuntimeException {
+		public StateNotFoundException(String stateName) {
+			super(String.format("'%s' is not defined.", stateName));
+		}
+	}
+
+	public static class State {
+		public String name;
+		public String onEnter;
+		public String onExit;
+
+		public State(String name, String onEnterAction, String onExitAction) {
+			this.name = name;
+			this.onEnter = onEnterAction;
+			this.onExit = onExitAction;
+		}
+	}
+
+	public static class Transition {
+		public String event;
+		public String fromStateName;
+		public String toStateName;
+		public String onTransition;
+
+		public Transition(String event, String fromStateName, String toStateName, String onTransitionAction) {
+			this.event = event;
+			this.fromStateName = fromStateName;
+			this.toStateName = toStateName;
+			this.onTransition = onTransitionAction;
+		}
+	}
+
 	public static RuleSet fromJson(String json){
 		Gson gson = new Gson();
 		return gson.fromJson(json, RuleSet.class);
+	}
+
+	HashMap<String, State> states = new HashMap<>();
+	HashMap<String, Transition> transitions = new HashMap<>();
+	final String initialEvent;
+
+	private RuleSet() {
+		initialEvent = "__init__";
+	}
+
+	private void registerState(String stateName, String onEnterAction, String onExitAction) {
+		states.put(stateName, new State(stateName, onEnterAction, onExitAction));
+	}
+
+	private void registerTransition(String event, String fromStateName, String toStateName, String action) {
+		State from = states.get(fromStateName);
+		State to = states.get(toStateName);
+		if (from == null) {
+			throw new StateNotFoundException(fromStateName);
+		}
+		if (to == null) {
+			throw new StateNotFoundException(toStateName);
+		}
+		transitions.put(event + "@" + fromStateName, new Transition(event, fromStateName, toStateName, action));
+	}
+
+	private void setInitialStateName(String initialStateName) {
+		State to = states.get(initialStateName);
+		if (to == null) {
+			throw new StateNotFoundException(initialStateName);
+		}
+		transitions.put(initialEvent, new Transition(initialEvent, null, initialStateName, null));
+	}
+
+	public Transition getTransition(State state, String event) {
+		Transition found;
+		if (state == null) {
+			found = transitions.get(initialEvent);
+		} else {
+			found = transitions.get(event + "@" + state.name);
+		}
+		return found;
+	}
+
+	public State getState(String stateName) {
+		return states.get(stateName);
 	}
 
 	public static class Builder {
@@ -46,51 +124,5 @@ public class RuleSet {
 			}
 			return ruleSet;
 		}
-	}
-
-	HashMap<String, XFSM.State> states = new HashMap<>();
-	HashMap<String, XFSM.Transition> transitions = new HashMap<>();
-	final String initEvent;
-
-	private RuleSet() {
-		initEvent = "__init__";
-	}
-
-	private void registerState(String stateName, String onEnterAction, String onExitAction) {
-		states.put(stateName, new XFSM.State(stateName, onEnterAction, onExitAction));
-	}
-
-	private void registerTransition(String event, String fromStateName, String toStateName, String action) {
-		XFSM.State from = states.get(fromStateName);
-		XFSM.State to = states.get(toStateName);
-		if (from == null) {
-			throw new XFSM.StateNotFoundException(fromStateName);
-		}
-		if (to == null) {
-			throw new XFSM.StateNotFoundException(toStateName);
-		}
-		transitions.put(event + "@" + fromStateName, new XFSM.Transition(event, fromStateName, toStateName, action));
-	}
-
-	private void setInitialStateName(String initialStateName) {
-		XFSM.State to = states.get(initialStateName);
-		if (to == null) {
-			throw new XFSM.StateNotFoundException(initialStateName);
-		}
-		transitions.put(initEvent, new XFSM.Transition(initEvent, null, initialStateName, null));
-	}
-
-	public XFSM.Transition getTransition(XFSM.State state, String event) {
-		XFSM.Transition found;
-		if (state == null) {
-			found = transitions.get(initEvent);
-		} else {
-			found = transitions.get(event + "@" + state.name);
-		}
-		return found;
-	}
-
-	public XFSM.State getState(String stateName) {
-		return states.get(stateName);
 	}
 }

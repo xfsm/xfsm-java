@@ -1,6 +1,5 @@
 package com.mabook.xfsm;
 
-import com.google.gson.Gson;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -166,7 +165,7 @@ public class XFSMTest {
 		actions.clear();
 	}
 
-	@Test(expected = XFSM.StateNotFoundException.class)
+	@Test(expected = RuleSet.StateNotFoundException.class)
 	public void testNotDefinedState(){
 		RuleSet.Builder rb = new RuleSet.Builder();
 		rb
@@ -190,18 +189,18 @@ public class XFSMTest {
 	}
 
 	@Test
-	public void testToJSON() throws InterruptedException {
+	public void testFromJSON() throws InterruptedException {
 		String json = "{\n" +
 				"    \"states\": {\n" +
 				"        \"hello\": {\n" +
 				"            \"name\": \"hello\",\n" +
-				"            \"onEnterAction\": \"say hello\",\n" +
-				"            \"onExitAction\": \"say bye\"\n" +
+				"            \"onEnter\": \"say hello\",\n" +
+				"            \"onExit\": \"say bye\"\n" +
 				"        },\n" +
 				"        \"init\": {\n" +
 				"            \"name\": \"init\",\n" +
-				"            \"onEnterAction\": \"at home\",\n" +
-				"            \"onExitAction\": \"at street\"\n" +
+				"            \"onEnter\": \"at home\",\n" +
+				"            \"onExit\": \"at street\"\n" +
 				"        }\n" +
 				"    },\n" +
 				"    \"transitions\": {\n" +
@@ -213,18 +212,19 @@ public class XFSMTest {
 				"            \"event\": \"go home\",\n" +
 				"            \"fromStateName\": \"hello\",\n" +
 				"            \"toStateName\": \"init\",\n" +
-				"            \"onTransitAction\": \"take a bus\"\n" +
+				"            \"onTransition\": \"take a bus\"\n" +
 				"        },\n" +
 				"        \"go out@init\": {\n" +
 				"            \"event\": \"go out\",\n" +
 				"            \"fromStateName\": \"init\",\n" +
 				"            \"toStateName\": \"hello\",\n" +
-				"            \"onTransitAction\": \"take a taxi\"\n" +
+				"            \"onTransition\": \"take a taxi\"\n" +
 				"        }\n" +
 				"    },\n" +
-				"    \"initEvent\": \"__init__\"\n" +
+				"    \"initialEvent\": \"__init__\"\n" +
 				"}";
 
+		System.out.println(json);
 		RuleSet ruleSet2 = RuleSet.fromJson(json);
 		final List<String> actions = new ArrayList<>();
 		final XFSM fsm = new XFSM(new LinkedBlockingQueue<String>(), ruleSet2);

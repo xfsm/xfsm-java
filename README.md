@@ -40,13 +40,13 @@ dependencies {
             "event": "go home",
             "fromStateName": "hello",
             "toStateName": "init",
-            "onTransitAction": "take a bus"
+            "onTransition": "take a bus"
         },
         "go out@init": {
             "event": "go out",
             "fromStateName": "init",
             "toStateName": "hello",
-            "onTransitAction": "take a taxi"
+            "onTransition": "take a taxi"
         }
     },
     "initEvent": "__init__"
