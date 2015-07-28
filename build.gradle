@@ -1,15 +1,65 @@
-group 'com.mabook'
-version '1.0-SNAPSHOT'
+buildscript {
+    repositories {
+        jcenter()
+    }
 
+}
+
+plugins {
+    id "com.jfrog.bintray" version "1.2"
+}
+
+group 'com.mabook'
+version '1.0'
+
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
 apply plugin: 'java'
+apply plugin: 'com.jfrog.bintray'
+
 
 sourceCompatibility = 1.7
 targetCompatibility = 1.7
 
 repositories {
-    mavenCentral()
+    jcenter()
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+
+publishing {
+    publications {
+        MyPublication(MavenPublication) {
+            from components.java
+            groupId project.group
+            artifactId project.name
+            version project.version
+        }
+    }
+}
+
+bintray {
+    user = bintray_user
+    key = bintray_key
+    publications = ['MyPublication']
+    pkg {
+        repo = 'maven'
+        name = project.name
+        userOrg = bintray_user
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/xfsm/xfsm-java.git'
+        labels = ['fsm', 'cross platform']
+        publicDownloadNumbers = true
+        version {
+            name = project.version
+        }
+    }
+}
+
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.4'
 }
