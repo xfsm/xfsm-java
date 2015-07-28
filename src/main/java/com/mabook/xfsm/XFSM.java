@@ -16,8 +16,8 @@ public class XFSM {
 		HashMap<String, Transition> eventRegistry = new HashMap<>();
 		final String initEvent;
 
-		public RuleSet(){
-			initEvent = "__init__"+ this.hashCode();
+		public RuleSet() {
+			initEvent = "__init__" + this.hashCode();
 		}
 
 		public RuleSet registerState(String stateName, String onEnterAction, String onExitAction) {
@@ -39,13 +39,13 @@ public class XFSM {
 		}
 
 		public Transition getTransition(State state, String event) {
-			if( state == null ){
+			if (state == null) {
 				return eventRegistry.get(initEvent);
 			}
 			return eventRegistry.get(event + "@" + state.name);
 		}
 
-		public State getState(String stateName){
+		public State getState(String stateName) {
 			return stateRegistry.get(stateName);
 		}
 	}
@@ -104,7 +104,7 @@ public class XFSM {
 		this.actionListener = actionListener;
 	}
 
-	public void init(){
+	public void init() {
 		emit(ruleSet.initEvent);
 	}
 
@@ -112,49 +112,49 @@ public class XFSM {
 		eventQueue.offer(event);
 	}
 
-	private void consume(String event){
+	private void consume(String event) {
 		State currentState = ruleSet.getState(currentStateName);
 
 		Transition transition = ruleSet.getTransition(currentState, event);
 		if (transition != null) {
-			if( currentState != null ) {
+
+			// EXIT
+			if (actionListener != null && currentState != null) {
 				if (currentState.onExitAction != null) {
-					if (actionListener != null) {
-						actionListener.onAction(this, When.EXIT, currentState.onExitAction);
-					}
+					actionListener.onAction(this, When.EXIT, currentState.onExitAction);
 				}
 				if (transition.onTransitAction != null) {
-					if (actionListener != null) {
-						actionListener.onAction(this, When.TRANSITION, transition.onTransitAction);
-					}
+					actionListener.onAction(this, When.TRANSITION, transition.onTransitAction);
 				}
 			}
 
 			currentState = transition.toState;
 			currentStateName = currentState.name;
 
-			if (currentState.onEnterAction != null) {
-				if (actionListener != null) {
-					actionListener.onAction(this, When.ENTER, currentState.onEnterAction);
+			// ENTER
+			if (actionListener != null) {
+				if (currentState.onEnterAction != null) {
+					if (actionListener != null) {
+						actionListener.onAction(this, When.ENTER, currentState.onEnterAction);
+					}
 				}
 			}
 		}
 	}
 
-	public void consumeOnce(){
+	public void consumeOnce() {
 		String event = eventQueue.poll();
-		if( event != null ){
+		if (event != null) {
 			consume(event);
 		}
 	}
 
-	public void consumeAll(){
-		while(true) {
+	public void consumeAll() {
+		while (true) {
 			String event = eventQueue.poll();
 			if (event != null) {
 				consume(event);
-			}
-			else{
+			} else {
 				break;
 			}
 		}
