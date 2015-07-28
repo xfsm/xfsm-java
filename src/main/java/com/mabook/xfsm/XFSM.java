@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class XFSM {
-	public enum When {ENTER, EXIT, TRANSITION};
+	public enum When {INIT, ENTER, TRANSITION, EXIT, SHUTDOWN};
 
 	public interface ActionListener{
 		void onAction(XFSM context, When when, String action);
@@ -83,6 +83,10 @@ public class XFSM {
 		this.actionListener = actionListener;
 	}
 
+	public State getCurrentState() {
+		return currentState;
+	}
+
 	public ActionListener getActionListener() {
 		return actionListener;
 	}
@@ -91,12 +95,27 @@ public class XFSM {
 		this.actionListener = actionListener;
 	}
 
+	public String shutdown(){
+		if( currentState == null ) return null;
+
+		if (currentState.onEnterAction != null) {
+			if (actionListener != null) {
+				actionListener.onAction(this, When.SHUTDOWN, currentState.onExitAction);
+			}
+		}
+		String exitAction = currentState.onExitAction;
+		currentState = null;
+		return exitAction;
+	}
+
 	public String init(){
+		if( currentState != null ) return null;
+
 		this.currentState = ruleSet.getInitialState();
 
 		if (currentState.onEnterAction != null) {
 			if (actionListener != null) {
-				actionListener.onAction(this, When.ENTER, currentState.onEnterAction);
+				actionListener.onAction(this, When.INIT, currentState.onEnterAction);
 			}
 		}
 
