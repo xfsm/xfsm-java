@@ -30,14 +30,14 @@ public class XFSM {
 
 	public static class Transition {
 		public String event;
-		public State fromState;
-		public State toState;
+		public String fromStateName;
+		public String toStateName;
 		public String onTransitAction;
 
-		public Transition(String event, State fromState, State toState, String onTransitAction) {
+		public Transition(String event, String fromStateName, String toStateName, String onTransitAction) {
 			this.event = event;
-			this.fromState = fromState;
-			this.toState = toState;
+			this.fromStateName = fromStateName;
+			this.toStateName = toStateName;
 			this.onTransitAction = onTransitAction;
 		}
 	}
@@ -93,7 +93,7 @@ public class XFSM {
 				}
 			}
 
-			currentState = transition.toState;
+			currentState = ruleSet.getState(transition.toStateName);
 			currentStateName = currentState.name;
 
 			// ENTER

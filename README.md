@@ -13,3 +13,43 @@ dependencies {
     compile 'com.mabook:xfsm:1.0'
 }
 ```
+
+
+## json format
+
+```json
+{
+    "states": {
+        "hello": {
+            "name": "hello",
+            "onEnterAction": "say hello",
+            "onExitAction": "say bye"
+        },
+        "init": {
+            "name": "init",
+            "onEnterAction": "at home",
+            "onExitAction": "at street"
+        }
+    },
+    "transitions": {
+        "__init__": {
+            "event": "__init__",
+            "toStateName": "init"
+        },
+        "go home@hello": {
+            "event": "go home",
+            "fromStateName": "hello",
+            "toStateName": "init",
+            "onTransitAction": "take a bus"
+        },
+        "go out@init": {
+            "event": "go out",
+            "fromStateName": "init",
+            "toStateName": "hello",
+            "onTransitAction": "take a taxi"
+        }
+    },
+    "initEvent": "__init__"
+}
+```
+
