@@ -28,13 +28,14 @@ public class XFSMTest {
 
 	@Test
 	public void testEmitConsumeAll(){
-		XFSM.RuleSet ruleSet = new XFSM.RuleSet();
-		ruleSet
-				.registerState("init", "at home", "at street")
-				.registerState("hello", "say hello", "say bye")
-				.setInitialStateName("init")
-				.registerEvent("go out", "init", "hello", "take a taxi")
-				.registerEvent("go home", "hello", "init", "take a bus");
+		RuleSet.Builder rb = new RuleSet.Builder();
+		rb
+				.state("init", "at home", "at street")
+				.state("hello", "say hello", "say bye")
+				.initialState("init")
+				.event("go out", "init", "hello", "take a taxi")
+				.event("go home", "hello", "init", "take a bus");
+		RuleSet ruleSet = rb.build();
 
 
 		final List<String> actions = new ArrayList<>();
@@ -63,14 +64,14 @@ public class XFSMTest {
 
 	@Test
 	public void testEmitLoop() throws InterruptedException {
-		XFSM.RuleSet ruleSet = new XFSM.RuleSet();
-		ruleSet
-				.registerState("init", "at home", "at street")
-				.registerState("hello", "say hello", "say bye")
-				.setInitialStateName("init")
-				.registerEvent("go out", "init", "hello", "take a taxi")
-				.registerEvent("go home", "hello", "init", "take a bus");
-
+		RuleSet.Builder rb = new RuleSet.Builder();
+		rb
+				.state("init", "at home", "at street")
+				.state("hello", "say hello", "say bye")
+				.initialState("init")
+				.event("go out", "init", "hello", "take a taxi")
+				.event("go home", "hello", "init", "take a bus");
+		RuleSet ruleSet = rb.build();
 
 		final List<String> actions = new ArrayList<>();
 		final XFSM fsm = new XFSM(new LinkedBlockingQueue<String>(), ruleSet);
@@ -110,13 +111,14 @@ public class XFSMTest {
 
 	@Test
 	public void testEmitNested() throws InterruptedException {
-		XFSM.RuleSet ruleSet = new XFSM.RuleSet();
-		ruleSet
-				.registerState("init", "at home", "at street")
-				.registerState("hello", "say hello", "say bye")
-				.setInitialStateName("init")
-				.registerEvent("go out", "init", "hello", "take a taxi")
-				.registerEvent("go home", "hello", "init", "take a bus");
+		RuleSet.Builder rb = new RuleSet.Builder();
+		rb
+				.state("init", "at home", "at street")
+				.state("hello", "say hello", "say bye")
+				.initialState("init")
+				.event("go out", "init", "hello", "take a taxi")
+				.event("go home", "hello", "init", "take a bus");
+		RuleSet ruleSet = rb.build();
 
 
 		final List<String> actions = new ArrayList<>();
@@ -165,12 +167,25 @@ public class XFSMTest {
 
 	@Test(expected = XFSM.StateNotFoundException.class)
 	public void testNotDefinedState(){
-		XFSM.RuleSet ruleSet = new XFSM.RuleSet();
-		ruleSet
-				.registerState("init", "at home", "at street")
-				.registerState("hello", "say hello", "say bye")
-				.setInitialStateName("init")
-				.registerEvent("go out", "init2", "hello", "take a taxi")
-				.registerEvent("go home", "hello", "init", "take a bus");
+		RuleSet.Builder rb = new RuleSet.Builder();
+		rb
+				.state("init", "at home", "at street")
+				.state("hello", "say hello", "say bye")
+				.initialState("init")
+				.event("go out", "init2", "hello", "take a taxi")
+				.event("go home", "hello", "init", "take a bus");
+		RuleSet ruleSet = rb.build();
 	}
+
+	@Test(expected = RuleSet.InitialStateNotSetException.class)
+	public void testNoInitialState(){
+		RuleSet.Builder rb = new RuleSet.Builder();
+		rb
+				.state("init", "at home", "at street")
+				.state("hello", "say hello", "say bye")
+				.event("go out", "init", "hello", "take a taxi")
+				.event("go home", "hello", "init", "take a bus");
+		RuleSet ruleSet = rb.build();
+	}
+
 }

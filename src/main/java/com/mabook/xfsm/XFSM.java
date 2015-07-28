@@ -1,7 +1,6 @@
 package com.mabook.xfsm;
 
 
-import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
 
 public class XFSM {
@@ -11,54 +10,9 @@ public class XFSM {
 		void onAction(XFSM context, When when, String action);
 	}
 
-	public static class StateNotFoundException extends RuntimeException{
+	public static class StateNotFoundException extends RuntimeException {
 		public StateNotFoundException(String stateName) {
 			super(String.format("'%s' is not defined.", stateName));
-		}
-	}
-
-	public static class RuleSet {
-		HashMap<String, State> stateRegistry = new HashMap<>();
-		HashMap<String, Transition> eventRegistry = new HashMap<>();
-		final String initEvent;
-
-		public RuleSet() {
-			initEvent = "__init__" + this.hashCode();
-		}
-
-		public RuleSet registerState(String stateName, String onEnterAction, String onExitAction) {
-			stateRegistry.put(stateName, new State(stateName, onEnterAction, onExitAction));
-			return this;
-		}
-
-		public RuleSet registerEvent(String event, String fromStateName, String toStateName, String action) {
-			State from = stateRegistry.get(fromStateName);
-			State to = stateRegistry.get(toStateName);
-			if( from == null ){
-				throw new StateNotFoundException(fromStateName);
-			}
-			if( to == null ){
-				throw new StateNotFoundException(toStateName);
-			}
-			eventRegistry.put(event + "@" + fromStateName, new Transition(event, from, to, action));
-			return this;
-		}
-
-		public RuleSet setInitialStateName(String initialStateName) {
-			State to = stateRegistry.get(initialStateName);
-			eventRegistry.put(initEvent, new Transition(initEvent, null, to, null));
-			return this;
-		}
-
-		public Transition getTransition(State state, String event) {
-			if (state == null) {
-				return eventRegistry.get(initEvent);
-			}
-			return eventRegistry.get(event + "@" + state.name);
-		}
-
-		public State getState(String stateName) {
-			return stateRegistry.get(stateName);
 		}
 	}
 
@@ -130,7 +84,7 @@ public class XFSM {
 		Transition transition = ruleSet.getTransition(currentState, event);
 		if (transition != null) {
 			// EXIT
-			if (actionListener != null ) {
+			if (actionListener != null) {
 				if (currentState != null && currentState.onExitAction != null) {
 					actionListener.onAction(this, When.EXIT, currentState.onExitAction);
 				}
