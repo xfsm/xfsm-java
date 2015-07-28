@@ -9,42 +9,12 @@ import java.util.HashMap;
  */
 public class RuleSet {
 
-	public static class InitialStateNotSetException extends RuntimeException {
-		public InitialStateNotSetException() {
-			super(String.format("An initial state is not set."));
-		}
-	}
+	final String initialEvent;
+	HashMap<String, State> states = new HashMap<>();
+	HashMap<String, Transition> transitions = new HashMap<>();
 
-	public static class StateNotFoundException extends RuntimeException {
-		public StateNotFoundException(String stateName) {
-			super(String.format("'%s' is not defined.", stateName));
-		}
-	}
-
-	public static class State {
-		public String name;
-		public String onEnter;
-		public String onExit;
-
-		public State(String name, String onEnterAction, String onExitAction) {
-			this.name = name;
-			this.onEnter = onEnterAction;
-			this.onExit = onExitAction;
-		}
-	}
-
-	public static class Transition {
-		public String event;
-		public String fromStateName;
-		public String toStateName;
-		public String onTransition;
-
-		public Transition(String event, String fromStateName, String toStateName, String onTransitionAction) {
-			this.event = event;
-			this.fromStateName = fromStateName;
-			this.toStateName = toStateName;
-			this.onTransition = onTransitionAction;
-		}
+	RuleSet() {
+		initialEvent = "__init__";
 	}
 
 	public static RuleSet fromJson(String json){
@@ -52,12 +22,9 @@ public class RuleSet {
 		return gson.fromJson(json, RuleSet.class);
 	}
 
-	HashMap<String, State> states = new HashMap<>();
-	HashMap<String, Transition> transitions = new HashMap<>();
-	final String initialEvent;
-
-	private RuleSet() {
-		initialEvent = "__init__";
+	public String toJson() {
+		Gson gson = new Gson();
+		return gson.toJson(this);
 	}
 
 	private void registerState(String stateName, String onEnterAction, String onExitAction) {
@@ -98,6 +65,79 @@ public class RuleSet {
 		return states.get(stateName);
 	}
 
+	public static class InitialStateNotSetException extends RuntimeException {
+		public InitialStateNotSetException() {
+			super(String.format("An initial state is not set."));
+		}
+	}
+
+	public static class StateNotFoundException extends RuntimeException {
+		public StateNotFoundException(String stateName) {
+			super(String.format("'%s' is not defined.", stateName));
+		}
+	}
+
+	public static class State {
+		public String name;
+		public String onEnter;
+		public String onExit;
+
+		public State(String name, String onEnterAction, String onExitAction) {
+			this.name = name;
+			this.onEnter = onEnterAction;
+			this.onExit = onExitAction;
+		}
+	}
+
+	public static class Transition {
+		public String event;
+		public String fromStateName;
+		public String toStateName;
+		public String onTransition;
+
+		public Transition(String event, String fromStateName, String toStateName, String onTransitionAction) {
+			this.event = event;
+			this.fromStateName = fromStateName;
+			this.toStateName = toStateName;
+			this.onTransition = onTransitionAction;
+		}
+	}
+
+	public static class TransitionBuilder {
+		String fromStateName;
+		String toStateName;
+		String action;
+		String event;
+		Builder builder;
+		boolean isBuilt = false;
+
+		public TransitionBuilder(Builder builder, String fromStateName) {
+			this.builder = builder;
+			this.fromStateName = fromStateName;
+		}
+
+		public TransitionBuilder onEvent(String event, String toStateName) {
+			builder.transition(event, fromStateName, toStateName, null);
+			return this;
+		}
+
+		public TransitionBuilder onEvent(String event, String toStateName, String action) {
+			builder.transition(event, fromStateName, toStateName, action);
+			return this;
+		}
+
+		public TransitionBuilder onState(String fromStateName) {
+			return new TransitionBuilder(builder, fromStateName);
+		}
+
+		public Builder initialState(String stateName) {
+			return builder.initialState(stateName);
+		}
+
+		public RuleSet build() {
+			return builder.build();
+		}
+	}
 	public static class Builder {
 		RuleSet ruleSet = new RuleSet();
 		boolean initialStateSet = false;
@@ -110,6 +150,10 @@ public class RuleSet {
 		public Builder transition(String event, String fromStateName, String toStateName, String action) {
 			ruleSet.registerTransition(event, fromStateName, toStateName, action);
 			return this;
+		}
+
+		public TransitionBuilder onState(String fromStateName) {
+			return new TransitionBuilder(this, fromStateName);
 		}
 
 		public Builder initialState(String stateName) {

@@ -270,4 +270,32 @@ public class XFSMTest {
 		actions.clear();
 	}
 
+
+	@Test
+	public void testBuilder() {
+		RuleSet.Builder rb = new RuleSet.Builder();
+		rb
+				.state("init", "at home", "at street")
+				.state("hello", "say hello", "say bye")
+				.initialState("init")
+				.transition("go out", "init", "hello", "take a taxi")
+				.transition("go home", "hello", "init", "take a bus");
+		RuleSet ruleSet = rb.build();
+
+		RuleSet.Builder rb2 = new RuleSet.Builder();
+		rb2
+				.state("init", "at home", "at street")
+				.state("hello", "say hello", "say bye")
+				.initialState("init")
+				.onState("init")
+				.onEvent("go out", "hello", "take a taxi")
+				.onState("hello")
+				.onEvent("go home", "init", "take a bus");
+		RuleSet ruleSet2 = rb2.build();
+
+		System.out.println(ruleSet.toJson());
+		System.out.println(ruleSet2.toJson());
+		assertTrue("builder same", ruleSet.toJson().equals(ruleSet2.toJson()));
+	}
+
 }
