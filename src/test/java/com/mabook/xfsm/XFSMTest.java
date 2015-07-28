@@ -29,16 +29,23 @@ public class XFSMTest extends TestCase {
 
 	@Test
 	public void testNew(){
-
-		XFSM.State init = new XFSM.State("init", "woke up", "go out");
-		XFSM.State hello = new XFSM.State("init", "say hello", "say bye");
+		XFSM.State init = new XFSM.State("init", "at home", "at street");
+		XFSM.State hello = new XFSM.State("hello", "say hello", "say bye");
 
 		ArrayList<XFSM.Transition> transitions = new ArrayList<>();
-		transitions.add(new XFSM.Transition("hi",init,hello,"meet somebody"));
+		transitions.add(new XFSM.Transition("go out", init, hello, "take a taxi"));
+		transitions.add(new XFSM.Transition("go home", hello, init, "take a bus"));
 
 		XFSM fsm = new XFSM(init, transitions, null);
-		System.out.println(fsm.init());
-		List<String> actions = fsm.run("hi");
-		System.out.println(actions.toString());
+		String initAction = fsm.init();
+		assertEquals("initial action", initAction, "at home");
+
+		List<String> actions;
+
+		actions = fsm.run("go out");
+		assertArrayEquals("go out actions", actions.toArray(), new String[]{"at street", "take a taxi", "say hello"});
+
+		actions = fsm.run("go home");
+		assertArrayEquals("go home actions", actions.toArray(), new String[]{"say bye", "take a bus", "at home"});
 	}
 }

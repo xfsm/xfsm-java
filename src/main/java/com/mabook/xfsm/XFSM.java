@@ -74,23 +74,26 @@ public class XFSM {
 
 	public void emit(String event){
 		if( currentState != null ) {
-			Transition transition = stateMap.get(currentState).get(event);
-			if (transition != null) {
-				if( actionListener != null ) {
-					if (currentState.onExitAction != null) {
-						actionListener.onAction(this, currentState.onExitAction);
+			HashMap<String, Transition> eventMap = stateMap.get(currentState);
+			if( eventMap != null ) {
+				Transition transition = eventMap.get(event);
+				if (transition != null) {
+					if (actionListener != null) {
+						if (currentState.onExitAction != null) {
+							actionListener.onAction(this, currentState.onExitAction);
+						}
+
+						if (transition.onTransitAction != null) {
+							actionListener.onAction(this, transition.onTransitAction);
+						}
 					}
 
-					if (transition.onTransitAction != null) {
-						actionListener.onAction(this, transition.onTransitAction);
-					}
-				}
+					currentState = transition.toState;
 
-				currentState = transition.toState;
-
-				if ( actionListener != null ) {
-					if (currentState.onEnterAction != null) {
-						actionListener.onAction(this, currentState.onEnterAction);
+					if (actionListener != null) {
+						if (currentState.onEnterAction != null) {
+							actionListener.onAction(this, currentState.onEnterAction);
+						}
 					}
 				}
 			}
@@ -100,18 +103,21 @@ public class XFSM {
 	public List<String> run(String event){
 		ArrayList<String> actions = new ArrayList<>();
 		if( currentState != null ) {
-			Transition transition = stateMap.get(currentState).get(event);
-			if (transition != null) {
-				if (currentState.onExitAction != null)
-					actions.add(currentState.onExitAction);
+			HashMap<String, Transition> eventMap = stateMap.get(currentState);
+			if( eventMap != null ) {
+				Transition transition = eventMap.get(event);
+				if (transition != null) {
+					if (currentState.onExitAction != null)
+						actions.add(currentState.onExitAction);
 
-				if (transition.onTransitAction != null)
-					actions.add(transition.onTransitAction);
+					if (transition.onTransitAction != null)
+						actions.add(transition.onTransitAction);
 
-				currentState = transition.toState;
+					currentState = transition.toState;
 
-				if (currentState.onEnterAction != null)
-					actions.add(currentState.onEnterAction);
+					if (currentState.onEnterAction != null)
+						actions.add(currentState.onEnterAction);
+				}
 			}
 		}
 		return actions;
