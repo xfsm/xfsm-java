@@ -22,13 +22,13 @@ dependencies {
     "states": {
         "hello": {
             "name": "hello",
-            "onEnterAction": "say hello",
-            "onExitAction": "say bye"
+            "onEnter": "say hello",
+            "onExit": "say bye"
         },
         "init": {
             "name": "init",
-            "onEnterAction": "at home",
-            "onExitAction": "at street"
+            "onEnter": "at home",
+            "onExit": "at street"
         }
     },
     "transitions": {
@@ -49,7 +49,7 @@ dependencies {
             "onTransition": "take a taxi"
         }
     },
-    "initEvent": "__init__"
+    "initialEvent": "__init__"
 }
 ```
 
