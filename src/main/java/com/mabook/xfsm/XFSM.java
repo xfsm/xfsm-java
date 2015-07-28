@@ -11,6 +11,12 @@ public class XFSM {
 		void onAction(XFSM context, When when, String action);
 	}
 
+	public static class StateNotFoundException extends RuntimeException{
+		public StateNotFoundException(String stateName) {
+			super(String.format("'%s' is not defined.", stateName));
+		}
+	}
+
 	public static class RuleSet {
 		HashMap<String, State> stateRegistry = new HashMap<>();
 		HashMap<String, Transition> eventRegistry = new HashMap<>();
@@ -28,6 +34,12 @@ public class XFSM {
 		public RuleSet registerEvent(String event, String fromStateName, String toStateName, String action) {
 			State from = stateRegistry.get(fromStateName);
 			State to = stateRegistry.get(toStateName);
+			if( from == null ){
+				throw new StateNotFoundException(fromStateName);
+			}
+			if( to == null ){
+				throw new StateNotFoundException(toStateName);
+			}
 			eventRegistry.put(event + "@" + fromStateName, new Transition(event, from, to, action));
 			return this;
 		}
@@ -117,10 +129,9 @@ public class XFSM {
 
 		Transition transition = ruleSet.getTransition(currentState, event);
 		if (transition != null) {
-
 			// EXIT
-			if (actionListener != null && currentState != null) {
-				if (currentState.onExitAction != null) {
+			if (actionListener != null ) {
+				if (currentState != null && currentState.onExitAction != null) {
 					actionListener.onAction(this, When.EXIT, currentState.onExitAction);
 				}
 				if (transition.onTransitAction != null) {

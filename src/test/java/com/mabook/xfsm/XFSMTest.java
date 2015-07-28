@@ -1,6 +1,5 @@
 package com.mabook.xfsm;
 
-import junit.framework.TestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,11 +9,12 @@ import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by sng2c on 15. 7. 27..
  */
-public class XFSMTest extends TestCase {
+public class XFSMTest {
 
 	@Before
 	public void setUp() throws Exception {
@@ -26,7 +26,7 @@ public class XFSMTest extends TestCase {
 
 	}
 
-
+	@Test
 	public void testEmitConsumeAll(){
 		XFSM.RuleSet ruleSet = new XFSM.RuleSet();
 		ruleSet
@@ -48,7 +48,7 @@ public class XFSMTest extends TestCase {
 
 		fsm.init();
 		fsm.consumeAll();
-		assertEquals("initial action", actions.get(0), "at home");
+		assertTrue("initial action", actions.get(0).equals("at home"));
 		actions.clear();
 
 		fsm.emit("go out");
@@ -61,6 +61,7 @@ public class XFSMTest extends TestCase {
 		assertArrayEquals("go home actions", actions.toArray(), new String[]{"say bye", "take a bus", "at home"});
 	}
 
+	@Test
 	public void testEmitLoop() throws InterruptedException {
 		XFSM.RuleSet ruleSet = new XFSM.RuleSet();
 		ruleSet
@@ -93,7 +94,8 @@ public class XFSMTest extends TestCase {
 
 		fsm.init();
 		Thread.sleep(100);
-		assertEquals("initial action", actions.get(0), "at home");
+
+		assertTrue("initial action", actions.get(0).equals("at home"));
 		actions.clear();
 
 		fsm.emit("go out");
@@ -106,6 +108,7 @@ public class XFSMTest extends TestCase {
 		assertArrayEquals("go home actions", actions.toArray(), new String[]{"say bye", "take a bus", "at home"});
 	}
 
+	@Test
 	public void testEmitNested() throws InterruptedException {
 		XFSM.RuleSet ruleSet = new XFSM.RuleSet();
 		ruleSet
@@ -121,7 +124,7 @@ public class XFSMTest extends TestCase {
 		fsm.setActionListener(new XFSM.ActionListener() {
 			@Override
 			public void onAction(XFSM context, XFSM.When when, String action) {
-				if(context.getCurrentState().name.equals("init") && when == XFSM.When.EXIT){
+				if (context.getCurrentState().name.equals("init") && when == XFSM.When.EXIT) {
 					context.emit("go home");
 				}
 				actions.add(action);
@@ -141,7 +144,8 @@ public class XFSMTest extends TestCase {
 
 		fsm.init();
 		Thread.sleep(100);
-		assertEquals("initial action", actions.get(0), "at home");
+
+		assertTrue("initial action", actions.get(0).equals("at home"));
 		actions.clear();
 
 		fsm.emit("go out");
@@ -159,4 +163,14 @@ public class XFSMTest extends TestCase {
 		actions.clear();
 	}
 
+	@Test(expected = XFSM.StateNotFoundException.class)
+	public void testNotDefinedState(){
+		XFSM.RuleSet ruleSet = new XFSM.RuleSet();
+		ruleSet
+				.registerState("init", "at home", "at street")
+				.registerState("hello", "say hello", "say bye")
+				.setInitialStateName("init")
+				.registerEvent("go out", "init2", "hello", "take a taxi")
+				.registerEvent("go home", "hello", "init", "take a bus");
+	}
 }
