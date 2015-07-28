@@ -8,8 +8,6 @@ import java.util.List;
 public class XFSM {
 	public enum When {INIT, ENTER, TRANSITION, EXIT, SHUTDOWN}
 
-	;
-
 	public interface ActionListener {
 		void onAction(XFSM context, When when, String action);
 	}
@@ -125,8 +123,9 @@ public class XFSM {
 	}
 
 	boolean inTask = false;
+
 	public synchronized List<String> emit(String event) {
-		if( inTask ) return null;
+		if (inTask) return null;
 
 		inTask = true;
 		ArrayList<String> actions = new ArrayList<>();
@@ -159,8 +158,7 @@ public class XFSM {
 					}
 				}
 			}
-		}
-		finally {
+		} finally {
 			inTask = false;
 		}
 		return actions;
