@@ -43,10 +43,10 @@ public class XFSMTest extends TestCase {
 
 		List<String> actions;
 
-		actions = fsm.run("go out");
+		actions = fsm.emit("go out");
 		assertArrayEquals("go out actions", actions.toArray(), new String[]{"at street", "take a taxi", "say hello"});
 
-		actions = fsm.run("go home");
+		actions = fsm.emit("go home");
 		assertArrayEquals("go home actions", actions.toArray(), new String[]{"say bye", "take a bus", "at home"});
 	}
 

@@ -6,9 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 
 public class XFSM {
-	public enum When {INIT, ENTER, TRANSITION, EXIT, SHUTDOWN};
+	public enum When {INIT, ENTER, TRANSITION, EXIT, SHUTDOWN}
 
-	public interface ActionListener{
+	;
+
+	public interface ActionListener {
 		void onAction(XFSM context, When when, String action);
 	}
 
@@ -17,19 +19,19 @@ public class XFSM {
 		HashMap<String, Transition> eventRegistry = new HashMap<>();
 		String initialStateName;
 
-		public RuleSet registerState(String stateName, String onEnterAction, String onExitAction){
+		public RuleSet registerState(String stateName, String onEnterAction, String onExitAction) {
 			stateRegistry.put(stateName, new State(stateName, onEnterAction, onExitAction));
 			return this;
 		}
 
-		public RuleSet registerEvent(String event, String fromStateName, String toStateName, String action){
+		public RuleSet registerEvent(String event, String fromStateName, String toStateName, String action) {
 			State from = stateRegistry.get(fromStateName);
 			State to = stateRegistry.get(toStateName);
-			eventRegistry.put(event+"@"+fromStateName, new Transition(event, from, to, action));
+			eventRegistry.put(event + "@" + fromStateName, new Transition(event, from, to, action));
 			return this;
 		}
 
-		public State getInitialState(){
+		public State getInitialState() {
 			return stateRegistry.get(initialStateName);
 		}
 
@@ -38,12 +40,12 @@ public class XFSM {
 			return this;
 		}
 
-		public Transition getTransition(State state, String event){
-			return eventRegistry.get(event+"@"+state.name);
+		public Transition getTransition(State state, String event) {
+			return eventRegistry.get(event + "@" + state.name);
 		}
 	}
 
-	public static class State{
+	public static class State {
 		public String name;
 		public String onEnterAction;
 		public String onExitAction;
@@ -55,7 +57,7 @@ public class XFSM {
 		}
 	}
 
-	public static class Transition{
+	public static class Transition {
 		public String event;
 		public State fromState;
 		public State toState;
@@ -74,11 +76,11 @@ public class XFSM {
 
 	final RuleSet ruleSet;
 
-	public XFSM(RuleSet ruleSet){
+	public XFSM(RuleSet ruleSet) {
 		this(ruleSet, null);
 	}
 
-	public XFSM(RuleSet ruleSet, ActionListener actionListener){
+	public XFSM(RuleSet ruleSet, ActionListener actionListener) {
 		this.ruleSet = ruleSet;
 		this.actionListener = actionListener;
 	}
@@ -95,8 +97,8 @@ public class XFSM {
 		this.actionListener = actionListener;
 	}
 
-	public String shutdown(){
-		if( currentState == null ) return null;
+	public synchronized String shutdown() {
+		if (currentState == null) return null;
 
 		if (currentState.onEnterAction != null) {
 			if (actionListener != null) {
@@ -108,8 +110,8 @@ public class XFSM {
 		return exitAction;
 	}
 
-	public String init(){
-		if( currentState != null ) return null;
+	public synchronized String init() {
+		if (currentState != null) return null;
 
 		this.currentState = ruleSet.getInitialState();
 
@@ -122,48 +124,46 @@ public class XFSM {
 		return currentState.onEnterAction;
 	}
 
-	public void emit(String event){
-		if( currentState != null ) {
-			Transition transition = ruleSet.getTransition(currentState, event);
-			if (transition != null) {
-				if (actionListener != null) {
+	boolean inTask = false;
+	public synchronized List<String> emit(String event) {
+		if( inTask ) return null;
+
+		inTask = true;
+		ArrayList<String> actions = new ArrayList<>();
+		try {
+			if (currentState != null) {
+				Transition transition = ruleSet.getTransition(currentState, event);
+				if (transition != null) {
+
 					if (currentState.onExitAction != null) {
-						actionListener.onAction(this, When.EXIT, currentState.onExitAction);
+						actions.add(currentState.onExitAction);
+						if (actionListener != null) {
+							actionListener.onAction(this, When.EXIT, currentState.onExitAction);
+						}
 					}
 
 					if (transition.onTransitAction != null) {
-						actionListener.onAction(this, When.TRANSITION, transition.onTransitAction);
+						actions.add(transition.onTransitAction);
+						if (actionListener != null) {
+							actionListener.onAction(this, When.TRANSITION, transition.onTransitAction);
+						}
 					}
-				}
 
-				currentState = transition.toState;
+					currentState = transition.toState;
 
-				if (actionListener != null) {
 					if (currentState.onEnterAction != null) {
-						actionListener.onAction(this, When.ENTER, currentState.onEnterAction);
+						actions.add(currentState.onEnterAction);
+						if (actionListener != null) {
+							actionListener.onAction(this, When.ENTER, currentState.onEnterAction);
+						}
 					}
 				}
 			}
 		}
-	}
-
-	public List<String> run(String event){
-		ArrayList<String> actions = new ArrayList<>();
-		if( currentState != null ) {
-			Transition transition = ruleSet.getTransition(currentState, event);
-			if (transition != null) {
-				if (currentState.onExitAction != null)
-					actions.add(currentState.onExitAction);
-
-				if (transition.onTransitAction != null)
-					actions.add(transition.onTransitAction);
-
-				currentState = transition.toState;
-
-				if (currentState.onEnterAction != null)
-					actions.add(currentState.onEnterAction);
-			}
+		finally {
+			inTask = false;
 		}
 		return actions;
 	}
+
 }
