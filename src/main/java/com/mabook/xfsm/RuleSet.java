@@ -49,12 +49,11 @@ public class RuleSet {
 		initEvent = "__init__" + this.hashCode();
 	}
 
-	private RuleSet registerState(String stateName, String onEnterAction, String onExitAction) {
+	private void registerState(String stateName, String onEnterAction, String onExitAction) {
 		stateRegistry.put(stateName, new XFSM.State(stateName, onEnterAction, onExitAction));
-		return this;
 	}
 
-	private RuleSet registerEvent(String event, String fromStateName, String toStateName, String action) {
+	private void registerEvent(String event, String fromStateName, String toStateName, String action) {
 		XFSM.State from = stateRegistry.get(fromStateName);
 		XFSM.State to = stateRegistry.get(toStateName);
 		if (from == null) {
@@ -64,21 +63,18 @@ public class RuleSet {
 			throw new XFSM.StateNotFoundException(toStateName);
 		}
 		eventRegistry.put(event + "@" + fromStateName, new XFSM.Transition(event, from, to, action));
-		return this;
 	}
 
-	private RuleSet setInitialStateName(String initialStateName) {
+	private void setInitialStateName(String initialStateName) {
 		XFSM.State to = stateRegistry.get(initialStateName);
 		if (to == null) {
 			throw new XFSM.StateNotFoundException(initialStateName);
 		}
 		eventRegistry.put(initEvent, new XFSM.Transition(initEvent, null, to, null));
-		return this;
 	}
 
 	public XFSM.Transition getTransition(XFSM.State state, String event) {
-		XFSM.Transition found = null;
-		String stateName = null;
+		XFSM.Transition found;
 		if (state == null) {
 			found = eventRegistry.get(initEvent);
 		} else {
