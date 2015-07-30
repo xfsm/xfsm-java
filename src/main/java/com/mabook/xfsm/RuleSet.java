@@ -4,12 +4,15 @@ import com.google.gson.Gson;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by sng2c on 15. 7. 28..
  */
 public class RuleSet {
 
+	static Pattern pattern = Pattern.compile("\\s");
 	final String initialEvent;
 	HashMap<String, State> states = new HashMap<>();
 	HashMap<String, Transition> transitions = new HashMap<>();
@@ -21,6 +24,15 @@ public class RuleSet {
 	public static RuleSet fromJson(String json) {
 		Gson gson = new Gson();
 		return gson.fromJson(json, RuleSet.class);
+	}
+
+	public static void checkName(String name) {
+		if (name != null) {
+			Matcher m = pattern.matcher(name);
+			if (m.find()) {
+				throw new InvalidNameException(name);
+			}
+		}
 	}
 
 	public String toJson() {
@@ -55,10 +67,11 @@ public class RuleSet {
 			sb.append(from)
 					.append(" --> ")
 					.append(tr.toStateName)
-					.append(" : ")
-					.append(tr.event);
+					.append(" : event '")
+					.append(tr.event)
+					.append("'");
 			if (tr.onTransition != null) {
-				sb.append(" '")
+				sb.append(" do '")
 						.append(tr.onTransition)
 						.append("'");
 			}
@@ -67,7 +80,6 @@ public class RuleSet {
 		sb.append("@enduml").append("\n");
 		return sb.toString();
 	}
-
 
 	private void registerState(String stateName, String onEnterAction, String onExitAction) {
 		states.put(stateName, new State(stateName, onEnterAction, onExitAction));
@@ -119,12 +131,19 @@ public class RuleSet {
 		}
 	}
 
+	public static class InvalidNameException extends RuntimeException {
+		public InvalidNameException(String stateName) {
+			super(String.format("'%s' is not valid. Spaces are not allowed.", stateName));
+		}
+	}
+
 	public static class State {
 		public String name;
 		public String onEnter;
 		public String onExit;
 
 		public State(String name, String onEnterAction, String onExitAction) {
+			checkName(name);
 			this.name = name;
 			this.onEnter = onEnterAction;
 			this.onExit = onExitAction;
@@ -138,6 +157,9 @@ public class RuleSet {
 		public String onTransition;
 
 		public Transition(String event, String fromStateName, String toStateName, String onTransitionAction) {
+			checkName(event);
+			checkName(fromStateName);
+			checkName(toStateName);
 			this.event = event;
 			this.fromStateName = fromStateName;
 			this.toStateName = toStateName;
@@ -184,6 +206,10 @@ public class RuleSet {
 	public static class Builder {
 		RuleSet ruleSet = new RuleSet();
 		boolean initialStateSet = false;
+
+		public State getState(String stateName) {
+			return ruleSet.getState(stateName);
+		}
 
 		public Builder state(String stateName, String onEnterAction, String onExitAction) {
 			ruleSet.registerState(stateName, onEnterAction, onExitAction);
