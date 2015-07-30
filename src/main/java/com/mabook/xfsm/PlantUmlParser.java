@@ -28,8 +28,6 @@ public class PlantUmlParser {
 			@Override
 			public MatchResult onMatch(Lexer lexer, MatchResult matchResult) {
 				String ruleName = matchResult.getRule().getName();
-				if (!"AUTOSKIP".equals(ruleName))
-					System.out.println(ruleName + " > " + matchResult.getTokenString());
 
 				if ("STATE".equals(ruleName)) {
 					String stateName = matchResult.getTokenMatchers().get(0).getMatcher().group(1);
