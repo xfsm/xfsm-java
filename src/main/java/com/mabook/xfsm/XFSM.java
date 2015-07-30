@@ -2,6 +2,7 @@ package com.mabook.xfsm;
 
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class XFSM {
 	public enum When {ENTER, TRANSITION, EXIT}
@@ -12,17 +13,45 @@ public class XFSM {
 
 	String currentStateName;
 	ActionListener actionListener;
-	final BlockingQueue<String> eventQueue;
-	final RuleSet ruleSet;
+	BlockingQueue<String> eventQueue;
+	RuleSet ruleSet;
 
-	public XFSM(BlockingQueue<String> eventQueue, RuleSet ruleSet) {
-		this(eventQueue, ruleSet, null);
+	public XFSM() {
+		this(null, null);
 	}
 
-	public XFSM(BlockingQueue<String> eventQueue, RuleSet ruleSet, ActionListener actionListener) {
-		this.eventQueue = eventQueue;
+	public XFSM(RuleSet ruleSet) {
+		this(ruleSet, null);
+	}
+
+	public XFSM(RuleSet ruleSet, ActionListener actionListener) {
+		this.eventQueue = new LinkedBlockingQueue<>();
 		this.ruleSet = ruleSet;
 		this.actionListener = actionListener;
+	}
+
+	public RuleSet getRuleSet() {
+		return ruleSet;
+	}
+
+	public void setEventQueue(BlockingQueue<String> eventQueue) {
+		this.eventQueue = eventQueue;
+	}
+
+	public void setRuleSet(RuleSet ruleSet) {
+		this.ruleSet = ruleSet;
+	}
+
+	public BlockingQueue<String> getEventQueue() {
+		return eventQueue;
+	}
+
+	public String getCurrentStateName() {
+		return currentStateName;
+	}
+
+	public void setCurrentStateName(String currentStateName) {
+		this.currentStateName = currentStateName;
 	}
 
 	public RuleSet.State getCurrentState() {
