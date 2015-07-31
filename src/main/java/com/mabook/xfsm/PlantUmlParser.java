@@ -12,14 +12,12 @@ public class PlantUmlParser {
 
 
 		com.mabook.java.runtimelexer.RuleSet lexRule = new com.mabook.java.runtimelexer.RuleSet();
-		lexRule.appendRule(new Rule("START", "@startuml\\n"));
-		lexRule.appendRule(new Rule("END", "@enduml\\n"));
 		lexRule.appendRule(new Rule("STATE", "State (\\S+?)\\n"));
 		lexRule.appendRule(new Rule("STATE_IN", "(\\S+) : in '(.+?)'\\n"));
 		lexRule.appendRule(new Rule("STATE_OUT", "(\\S+) : out '(.+?)'\\n"));
-		lexRule.appendRule(new Rule("INIT_STATE", "\\[\\*\\] --> (.+?) : event '__init__'\n"));
-		lexRule.appendRule(new Rule("EVENT_DO", "(\\S+?) --> (\\S+?) : event '(\\S+?)' do '(\\S+?)'\n"));
-		lexRule.appendRule(new Rule("EVENT", "(\\S+?) --> (\\S+?) : event '(\\S+?)'\n"));
+		lexRule.appendRule(new Rule("INIT_STATE", "\\[\\*\\] --> (.+?) : event '__init__'\\n"));
+		lexRule.appendRule(new Rule("EVENT_DO", "(\\S+?) --> (\\S+?) : event '(\\S+?)' do '(\\S+?)'\\n"));
+		lexRule.appendRule(new Rule("EVENT", "(\\S+?) --> (\\S+?) : event '(\\S+?)'\\n"));
 
 
 		final RuleSet.Builder builder = new RuleSet.Builder();
