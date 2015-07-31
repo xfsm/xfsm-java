@@ -10,8 +10,26 @@ repositories {
 }
 
 dependencies {
-    compile 'com.mabook:xfsm:1.1.2'
+    compile 'com.mabook:xfsm:1.1.6'
 }
+```
+
+## plantuml format
+
+```plantuml
+@startuml
+State HOME
+HOME : in 'SAY_I_AM_BACK'
+HOME : out 'SAY_I_WILL_BE_BACK'
+
+State SCHOOL
+SCHOOL : in 'YO_FRIENDS'
+SCHOOL : out 'BYE_FRIENDS'
+
+[*] --> HOME : event '__init__'
+HOME --> SCHOOL : event 'EV_AM8'
+SCHOOL --> HOME : event 'EV_PM7' do 'HAVE_DINNER'
+@enduml
 ```
 
 
@@ -19,37 +37,36 @@ dependencies {
 
 ```json
 {
+    "initialEvent": "__init__",
     "states": {
-        "hello": {
-            "name": "hello",
-            "onEnter": "say hello",
-            "onExit": "say bye"
+        "HOME": {
+            "name": "HOME",
+            "onEnter": "SAY_I_AM_BACK",
+            "onExit": "SAY_I_WILL_BE_BACK"
         },
-        "init": {
-            "name": "init",
-            "onEnter": "at home",
-            "onExit": "at street"
+        "SCHOOL": {
+            "name": "SCHOOL",
+            "onEnter": "YO_FRIENDS",
+            "onExit": "BYE_FRIENDS"
         }
     },
     "transitions": {
+        "EV_AM8@HOME": {
+            "event": "EV_AM8",
+            "fromStateName": "HOME",
+            "toStateName": "SCHOOL"
+        },
         "__init__": {
             "event": "__init__",
-            "toStateName": "init"
+            "toStateName": "HOME"
         },
-        "go home@hello": {
-            "event": "go home",
-            "fromStateName": "hello",
-            "toStateName": "init",
-            "onTransition": "take a bus"
-        },
-        "go out@init": {
-            "event": "go out",
-            "fromStateName": "init",
-            "toStateName": "hello",
-            "onTransition": "take a taxi"
+        "EV_PM7@SCHOOL": {
+            "event": "EV_PM7",
+            "fromStateName": "SCHOOL",
+            "toStateName": "HOME",
+            "onTransition": "HAVE_DINNER"
         }
-    },
-    "initialEvent": "__init__"
+    }
 }
 ```
 
