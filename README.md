@@ -10,8 +10,26 @@ repositories {
 }
 
 dependencies {
-    compile 'com.mabook:xfsm:1.1.2'
+    compile 'com.mabook:xfsm:1.1.5'
 }
+```
+
+## plantuml format
+
+```plantuml
+@startuml
+State HOME
+HOME : in 'SAY_I_AM_BACK'
+HOME : out 'SAY_I_WILL_BE_BACK'
+
+State SCHOOL
+SCHOOL : in 'YO_FRIENDS'
+SCHOOL : out 'BYE_FRIENDS'
+
+[*] --> HOME : event '__init__'
+HOME --> SCHOOL : event 'EV_AM8'
+SCHOOL --> HOME : event 'EV_PM7' do 'HAVE_DINNER'
+@enduml
 ```
 
 
