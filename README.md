@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.mabook:xfsm:1.1.5'
+    compile 'com.mabook:xfsm:1.1.6'
 }
 ```
 
@@ -59,6 +59,12 @@ SCHOOL --> HOME : event 'EV_PM7' do 'HAVE_DINNER'
         "__init__": {
             "event": "__init__",
             "toStateName": "HOME"
+        },
+        "EV_PM7@SCHOOL": {
+            "event": "EV_PM7",
+            "fromStateName": "SCHOOL",
+            "toStateName": "HOME",
+            "onTransition": "HAVE_DINNER"
         }
     }
 }
