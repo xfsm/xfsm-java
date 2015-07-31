@@ -37,37 +37,30 @@ SCHOOL --> HOME : event 'EV_PM7' do 'HAVE_DINNER'
 
 ```json
 {
+    "initialEvent": "__init__",
     "states": {
-        "hello": {
-            "name": "hello",
-            "onEnter": "say hello",
-            "onExit": "say bye"
+        "HOME": {
+            "name": "HOME",
+            "onEnter": "SAY_I_AM_BACK",
+            "onExit": "SAY_I_WILL_BE_BACK"
         },
-        "init": {
-            "name": "init",
-            "onEnter": "at home",
-            "onExit": "at street"
+        "SCHOOL": {
+            "name": "SCHOOL",
+            "onEnter": "YO_FRIENDS",
+            "onExit": "BYE_FRIENDS"
         }
     },
     "transitions": {
+        "EV_AM8@HOME": {
+            "event": "EV_AM8",
+            "fromStateName": "HOME",
+            "toStateName": "SCHOOL"
+        },
         "__init__": {
             "event": "__init__",
-            "toStateName": "init"
-        },
-        "go home@hello": {
-            "event": "go home",
-            "fromStateName": "hello",
-            "toStateName": "init",
-            "onTransition": "take a bus"
-        },
-        "go out@init": {
-            "event": "go out",
-            "fromStateName": "init",
-            "toStateName": "hello",
-            "onTransition": "take a taxi"
+            "toStateName": "HOME"
         }
-    },
-    "initialEvent": "__init__"
+    }
 }
 ```
 
