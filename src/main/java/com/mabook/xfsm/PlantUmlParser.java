@@ -18,7 +18,7 @@ public class PlantUmlParser {
 		lexRule.appendRule(new Rule("STATE_IN", "(\\S+) : in '(.+?)'\\n"));
 		lexRule.appendRule(new Rule("STATE_OUT", "(\\S+) : out '(.+?)'\\n"));
 		lexRule.appendRule(new Rule("INIT_STATE", "\\[\\*\\] --> (.+?) : event '__init__'\n"));
-		lexRule.appendRule(new Rule("EVENT_DO", "(\\S+?) --> (\\S+?) : event '(\\S+?)' do '(.+?)'\n"));
+		lexRule.appendRule(new Rule("EVENT_DO", "(\\S+?) --> (\\S+?) : event '(\\S+?)' do '(\\S+?)'\n"));
 		lexRule.appendRule(new Rule("EVENT", "(\\S+?) --> (\\S+?) : event '(\\S+?)'\n"));
 
 
@@ -50,7 +50,7 @@ public class PlantUmlParser {
 					String toStateName = matchResult.getTokenMatchers().get(0).getMatcher().group(2);
 					String event = matchResult.getTokenMatchers().get(0).getMatcher().group(3);
 					builder.transition(event, fromStateName, toStateName, null);
-				} else if ("EVENT".equals(ruleName)) {
+				} else if ("EVENT_DO".equals(ruleName)) {
 					String fromStateName = matchResult.getTokenMatchers().get(0).getMatcher().group(1);
 					String toStateName = matchResult.getTokenMatchers().get(0).getMatcher().group(2);
 					String event = matchResult.getTokenMatchers().get(0).getMatcher().group(3);

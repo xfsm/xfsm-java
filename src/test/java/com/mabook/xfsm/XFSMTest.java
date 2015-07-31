@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
@@ -268,6 +267,7 @@ public class XFSMTest {
 		Thread.sleep(100);
 		assertArrayEquals("go_out actions", actions.toArray(), new String[]{"at street", "take a taxi", "say hello", "say bye", "take a bus", "at home"});
 		actions.clear();
+
 	}
 
 
