@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.mabook:xfsm:1.1.6'
+    compile 'com.mabook:xfsm:1.1.7'
 }
 ```
 
