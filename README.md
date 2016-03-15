@@ -72,3 +72,6 @@ SCHOOL --> HOME : event 'EV_PM7' do 'HAVE_DINNER'
 }
 ```
 
+## See also
+
+https://gist.github.com/sng2c/afca55a5a14aed2c26f6
