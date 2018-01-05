@@ -1,4 +1,4 @@
-package com.mabook.xfsm;
+package com.mabook.xfsm.test;
 
 import com.google.gson.Gson;
 
@@ -26,7 +26,7 @@ public class RuleSet {
 		return gson.fromJson(json, RuleSet.class);
 	}
 
-	public static void checkName(String name) {
+	static void validateName(String name) {
 		if (name != null) {
 			Matcher m = pattern.matcher(name);
 			if (m.find()) {
@@ -102,7 +102,7 @@ public class RuleSet {
 		if (to == null) {
 			throw new StateNotFoundException(initialStateName);
 		}
-		transitions.put(initialEvent, new Transition(initialEvent, null, initialStateName, null));
+		transitions.put(initialEvent, new Transition(initialEvent, null, initialStateName, "INIT_ACTION"));
 	}
 
 	public Transition getTransition(State state, String event) {
@@ -143,7 +143,7 @@ public class RuleSet {
 		public String onExit;
 
 		public State(String name, String onEnterAction, String onExitAction) {
-			checkName(name);
+			validateName(name);
 			this.name = name;
 			this.onEnter = onEnterAction;
 			this.onExit = onExitAction;
@@ -157,9 +157,9 @@ public class RuleSet {
 		public String onTransition;
 
 		public Transition(String event, String fromStateName, String toStateName, String onTransitionAction) {
-			checkName(event);
-			checkName(fromStateName);
-			checkName(toStateName);
+			validateName(event);
+			validateName(fromStateName);
+			validateName(toStateName);
 			this.event = event;
 			this.fromStateName = fromStateName;
 			this.toStateName = toStateName;

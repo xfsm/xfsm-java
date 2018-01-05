@@ -1,0 +1,13 @@
+@startuml
+State SCHOOL
+SCHOOL : in 'SCHOOL_IN'
+SCHOOL : out 'SCHOOL_OUT'
+
+State HOME
+HOME : in 'HOME_IN'
+HOME : out 'HOME_OUT'
+
+SCHOOL --> HOME : event 'EV_PM7' do 'EV_PM7_ACTION'
+HOME --> SCHOOL : event 'EV_AM8' do 'EV_AM8_ACTION'
+[*] --> HOME : event '__init__' do 'INIT_ACTION'
+@enduml

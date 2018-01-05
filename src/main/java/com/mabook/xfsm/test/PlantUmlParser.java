@@ -1,4 +1,4 @@
-package com.mabook.xfsm;
+package com.mabook.xfsm.test;
 
 import com.mabook.java.runtimelexer.Lexer;
 import com.mabook.java.runtimelexer.MatchResult;
@@ -12,12 +12,12 @@ public class PlantUmlParser {
 
 
 		com.mabook.java.runtimelexer.RuleSet lexRule = new com.mabook.java.runtimelexer.RuleSet();
-		lexRule.appendRule(new Rule("STATE", "State (\\S+?)\\n"));
-		lexRule.appendRule(new Rule("STATE_IN", "(\\S+) : in '(.+?)'\\n"));
-		lexRule.appendRule(new Rule("STATE_OUT", "(\\S+) : out '(.+?)'\\n"));
-		lexRule.appendRule(new Rule("INIT_STATE", "\\[\\*\\] --> (.+?) : event '__init__'\\n"));
-		lexRule.appendRule(new Rule("EVENT_DO", "(\\S+?) --> (\\S+?) : event '(\\S+?)' do '(\\S+?)'\\n"));
-		lexRule.appendRule(new Rule("EVENT", "(\\S+?) --> (\\S+?) : event '(\\S+?)'\\n"));
+		lexRule.appendRule(new Rule("STATE", "State\\s+(\\S+?)\\n"));
+		lexRule.appendRule(new Rule("STATE_IN", "(\\S+)\\s*:\\s*in\\s+'(.+?)'\\n"));
+		lexRule.appendRule(new Rule("STATE_OUT", "(\\S+)\\s*:\\s*out\\s+'(.+?)'\\n"));
+		lexRule.appendRule(new Rule("INIT_STATE", "\\[\\*\\]\\s*-->\\s*(.+?)\\s*:\\s*event\\s+'__init__'\\n"));
+		lexRule.appendRule(new Rule("EVENT_DO", "(\\S+?)\\s*-->\\s*(\\S+?)\\s*:\\s*event\\s+'(\\S+?)'\\s+do\\s+'(\\S+?)'\\n"));
+		lexRule.appendRule(new Rule("EVENT", "(\\S+?)\\s*-->\\s*(\\S+?)\\s*:\\s*event\\s+'(\\S+?)'\\n"));
 
 
 		final RuleSet.Builder builder = new RuleSet.Builder();

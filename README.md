@@ -15,60 +15,79 @@ dependencies {
 }
 ```
 
+
+## xfsm dsl
+
+```
+BEGIN_STATE
+- HOME
+- SCHOOL
+END_STATE
+
+BEGIN_EVENT
+- EV_AM8 HOME SCHOOL
+- EV_PM7 SCHOOL HOME
+END_EVENT
+```
+
+
 ## plantuml format
 
 ```plantuml
 @startuml
-State HOME
-HOME : in 'SAY_I_AM_BACK'
-HOME : out 'SAY_I_WILL_BE_BACK'
-
 State SCHOOL
-SCHOOL : in 'YO_FRIENDS'
-SCHOOL : out 'BYE_FRIENDS'
+SCHOOL : in 'SCHOOL_IN'
+SCHOOL : out 'SCHOOL_OUT'
 
-[*] --> HOME : event '__init__'
-HOME --> SCHOOL : event 'EV_AM8'
-SCHOOL --> HOME : event 'EV_PM7' do 'HAVE_DINNER'
+State HOME
+HOME : in 'HOME_IN'
+HOME : out 'HOME_OUT'
+
+SCHOOL --> HOME : event 'EV_PM7' do 'EV_PM7_ACTION'
+HOME --> SCHOOL : event 'EV_AM8' do 'EV_AM8_ACTION'
+[*] --> HOME : event '__init__' do 'INIT_ACTION'
 @enduml
 ```
 
-<img src="http://www.plantuml.com/plantuml/img/PP2n2eCm48RtFCLjWO9pIuTYr9I4gYa6B5BA8PX1Q2EqiS_Vs4OTkjmDtyztFnU_NFjqu-DEj6kT0Q4AJgO1U-WjKCqQbCWAJ5XweZCPHZUZYynpJ7ZWmQ9JeLHEVYkO6eN7Il8oqtG5Nr7Iy1MHw-O6KNI0SCgyZVKPnDxs3Z5Kc0AB94HuxNlk5lc_mmVEnPP2Dm0LhEQOoRBa5IMniPr_mGS0">
+
+<img src="https://www.planttext.com/plantuml/svg/SoWkIImgAStDuGekIIn9LGXszl3tz-62K0fM2fbv2keGJhoddpf2FB-q12xX7ngYpWNLx-7lwye58g1wGKomJgWOM1zO4AeBOg2khfq2L4LgMMeUK8rhM7o0hxcwGae-Z1tlw1pYwGyp2gG3xXg47aTV2xWU81kk9reh5eibyV6PUPabyV4GBPv-dY5m3GwfUId0O040">
 
 ## json format
 
 ```json
 {
-    "initialEvent": "__init__",
-    "states": {
-        "HOME": {
-            "name": "HOME",
-            "onEnter": "SAY_I_AM_BACK",
-            "onExit": "SAY_I_WILL_BE_BACK"
-        },
-        "SCHOOL": {
-            "name": "SCHOOL",
-            "onEnter": "YO_FRIENDS",
-            "onExit": "BYE_FRIENDS"
-        }
-    },
-    "transitions": {
-        "EV_AM8@HOME": {
-            "event": "EV_AM8",
-            "fromStateName": "HOME",
-            "toStateName": "SCHOOL"
-        },
-        "__init__": {
-            "event": "__init__",
-            "toStateName": "HOME"
-        },
-        "EV_PM7@SCHOOL": {
-            "event": "EV_PM7",
-            "fromStateName": "SCHOOL",
-            "toStateName": "HOME",
-            "onTransition": "HAVE_DINNER"
-        }
-    }
+   "initialEvent":"__init__",
+   "states":{
+      "SCHOOL":{
+         "name":"SCHOOL",
+         "onEnter":"SCHOOL_IN",
+         "onExit":"SCHOOL_OUT"
+      },
+      "HOME":{
+         "name":"HOME",
+         "onEnter":"HOME_IN",
+         "onExit":"HOME_OUT"
+      }
+   },
+   "transitions":{
+      "EV_PM7@SCHOOL":{
+         "event":"EV_PM7",
+         "fromStateName":"SCHOOL",
+         "toStateName":"HOME",
+         "onTransition":"EV_PM7_ACTION"
+      },
+      "EV_AM8@HOME":{
+         "event":"EV_AM8",
+         "fromStateName":"HOME",
+         "toStateName":"SCHOOL",
+         "onTransition":"EV_AM8_ACTION"
+      },
+      "__init__":{
+         "event":"__init__",
+         "toStateName":"HOME",
+         "onTransition":"INIT_ACTION"
+      }
+   }
 }
 ```
 

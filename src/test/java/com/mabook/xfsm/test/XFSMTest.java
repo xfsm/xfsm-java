@@ -1,4 +1,4 @@
-package com.mabook.xfsm;
+package com.mabook.xfsm.test;
 
 import org.junit.After;
 import org.junit.Before;
@@ -38,7 +38,7 @@ public class XFSMTest {
 
 
 		final List<String> actions = new ArrayList<>();
-		XFSM fsm = new XFSM(ruleSet);
+		XFSM fsm = new XFSM(ruleSet, null);
 		fsm.setActionListener(new XFSM.ActionListener() {
 			@Override
 			public void onAction(XFSM context, XFSM.When when, String action) {
@@ -73,7 +73,7 @@ public class XFSMTest {
 		RuleSet ruleSet = rb.build();
 
 		final List<String> actions = new ArrayList<>();
-		final XFSM fsm = new XFSM(ruleSet);
+		final XFSM fsm = new XFSM(ruleSet, null);
 		fsm.setActionListener(new XFSM.ActionListener() {
 			@Override
 			public void onAction(XFSM context, XFSM.When when, String action) {
@@ -121,7 +121,7 @@ public class XFSMTest {
 
 
 		final List<String> actions = new ArrayList<>();
-		final XFSM fsm = new XFSM(ruleSet);
+		final XFSM fsm = new XFSM(ruleSet, null);
 		fsm.setActionListener(new XFSM.ActionListener() {
 			@Override
 			public void onAction(XFSM context, XFSM.When when, String action) {
@@ -226,7 +226,7 @@ public class XFSMTest {
 		System.out.println(json);
 		RuleSet ruleSet2 = RuleSet.fromJson(json);
 		final List<String> actions = new ArrayList<>();
-		final XFSM fsm = new XFSM(ruleSet2);
+		final XFSM fsm = new XFSM(ruleSet2, null);
 		fsm.setActionListener(new XFSM.ActionListener() {
 			@Override
 			public void onAction(XFSM context, XFSM.When when, String action) {
