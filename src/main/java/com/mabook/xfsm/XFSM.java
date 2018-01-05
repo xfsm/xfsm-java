@@ -1,8 +1,6 @@
-package com.mabook.xfsm.test;
+package com.mabook.xfsm;
 
 
-import com.sun.istack.internal.NotNull;
-import com.sun.istack.internal.Nullable;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -21,7 +19,7 @@ public class XFSM {
     private RuleSet ruleSet;
 
     @SuppressWarnings("WeakerAccess")
-    public XFSM(@NotNull RuleSet ruleSet, @Nullable ActionListener actionListener) {
+    public XFSM(RuleSet ruleSet, ActionListener actionListener) {
         this.eventQueue = new LinkedBlockingQueue<>();
         this.ruleSet = ruleSet;
         this.actionListener = actionListener;

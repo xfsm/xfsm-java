@@ -1,4 +1,4 @@
-package com.mabook.xfsm.test;
+package com.mabook.xfsm;
 
 import org.junit.After;
 import org.junit.Before;

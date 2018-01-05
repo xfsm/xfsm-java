@@ -1,4 +1,4 @@
-package com.mabook.xfsm.test;
+package com.mabook.xfsm;
 
 import org.junit.After;
 import org.junit.Before;
@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -48,7 +49,7 @@ public class XFSMTest {
 
 		fsm.init();
 		fsm.consumeAll();
-		assertTrue("initial action", actions.get(0).equals("at home"));
+		assertEquals("initial action", "INIT_ACTION", actions.get(0));
 		actions.clear();
 
 		fsm.emit("go_out");
@@ -95,7 +96,7 @@ public class XFSMTest {
 		fsm.init();
 		Thread.sleep(100);
 
-		assertTrue("initial action", actions.get(0).equals("at home"));
+        assertEquals("initial action", "INIT_ACTION", actions.get(0));
 		actions.clear();
 
 		fsm.emit("go_out");
@@ -125,7 +126,8 @@ public class XFSMTest {
 		fsm.setActionListener(new XFSM.ActionListener() {
 			@Override
 			public void onAction(XFSM context, XFSM.When when, String action) {
-				if (context.getCurrentState().name.equals("init") && when == XFSM.When.EXIT) {
+			    System.out.println(context.getCurrentState() + " - "+when +" - "+ action);
+				if (context.getCurrentState()!=null && context.getCurrentState().name.equals("init") && when == XFSM.When.EXIT) {
 					context.emit("go_home");
 				}
 				actions.add(action);
@@ -146,7 +148,7 @@ public class XFSMTest {
 		fsm.init();
 		Thread.sleep(100);
 
-		assertTrue("initial action", actions.get(0).equals("at home"));
+        assertEquals("initial action", "INIT_ACTION", actions.get(0));
 		actions.clear();
 
 		fsm.emit("go_out");
