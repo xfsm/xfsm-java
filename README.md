@@ -52,7 +52,7 @@ HOME --> SCHOOL : event 'EV_AM8' do 'EV_AM8_ACTION'
 ```
 
 
-<img src="https://www.planttext.com/plantuml/svg/SoWkIImgAStDuGekIIn9LGXszl3tz-62K0fM2fbv2keGJhoddpf2FB-q12xX7ngYpWNLx-7lwye58g1wGKomJgWOM1zO4AeBOg2khfq2L4LgMMeUK8rhM7o0hxcwGae-Z1tlw1pYwGyp2gG3xXg47aTV2xWU81kk9reh5eibyV6PUPabyV4GBPv-dY5m3GwfUId0O040">
+<img src="https://www.plantuml.com/plantuml/svg/SoWkIImgAStDuGekIIn9LGXszl3tz-62K0fM2fbv2keGJhoddpf2FB-q12xX7ngYpWNLx-7lwye58g1wGKomJgWOM1zO4AeBOg2khfq2L4LgMMeUK8rhM7o0hxcwGae-Z1tlw1pYwGyp2gG3xXg47aTV2xWU81kk9reh5eibyV6PUPabyV4GBPv-dY5m3GwfUId0O040">
 
 ## json format
 
